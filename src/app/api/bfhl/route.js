@@ -7,7 +7,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { data } = await request.json();
+    const { data, file_b64 } = await request.json();
 
     if (!data || !Array.isArray(data)) {
       return new Response(
@@ -38,11 +38,31 @@ export async function POST(request) {
       }
     });
 
-    // Find the highest alphabet (case insensitive sorting)
+    // Find the highest lowercase alphabet
     let highest_alphabet = [];
-    if (alphabets.length > 0) {
-      const sortedAlphabets = alphabets.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-      highest_alphabet = [sortedAlphabets[sortedAlphabets.length - 1]]; // Last element is the highest alphabet
+    const lowercaseAlphabets = alphabets.filter(char => /^[a-z]$/.test(char));
+    if (lowercaseAlphabets.length > 0) {
+      highest_alphabet = [lowercaseAlphabets.sort((a, b) => b.localeCompare(a))[0]];
+    }
+
+    // File validation logic
+    let file_valid = false;
+    let file_mime_type = '';
+    let file_size_kb = 0;
+
+    if (file_b64) {
+      // Decode base64 to binary
+      const buffer = Buffer.from(file_b64, 'base64');
+
+      // Validate file MIME type (example: image/png)
+      const mime = require('mime-types');
+      file_mime_type = mime.lookup(buffer);
+
+      if (file_mime_type) {
+        file_valid = true;
+        // File size in kilobytes
+        file_size_kb = (buffer.length / 1024).toFixed(2); // Convert bytes to KB
+      }
     }
 
     // Build the response
@@ -53,7 +73,10 @@ export async function POST(request) {
       roll_number,
       numbers,
       alphabets,
-      highest_alphabet, // Corrected highest alphabet
+      highest_alphabet,
+      file_valid,
+      file_mime_type: file_mime_type || null,
+      file_size_kb: file_valid ? file_size_kb : null,
     };
 
     return new Response(JSON.stringify(response), {
