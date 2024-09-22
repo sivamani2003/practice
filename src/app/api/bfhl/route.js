@@ -51,7 +51,7 @@ export async function POST(request) {
     const lowercaseAlphabets = alphabets.filter(char => /^[a-z]$/.test(char));
 
     if (lowercaseAlphabets.length > 0) {
-      // Use Math.max and spread operator to find the highest alphabet character
+      // Use reduce to find the highest alphabet character
       highest_alphabet = lowercaseAlphabets.reduce((max, current) => 
         current > max ? current : max
       );
@@ -66,12 +66,15 @@ export async function POST(request) {
       // Decode base64 to binary
       const buffer = Buffer.from(file_b64, 'base64');
 
-      // Validate file MIME type using basic MIME detection
+      // Validate file MIME type using basic MIME detection for PDF, JPEG, and PNG
       if (file_b64.startsWith('/9j/')) {
         file_mime_type = 'image/jpeg';
         file_valid = true;
       } else if (file_b64.startsWith('iVBORw0KGgo')) {
         file_mime_type = 'image/png';
+        file_valid = true;
+      } else if (file_b64.startsWith('JVBER') || file_b64.startsWith('0x25PDF')) {
+        file_mime_type = 'application/pdf';
         file_valid = true;
       } else {
         file_mime_type = 'unknown';
@@ -103,6 +106,7 @@ export async function POST(request) {
     });
 
   } catch (error) {
+    // Handle server error
     return new Response(
       JSON.stringify({
         is_success: false,
