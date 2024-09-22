@@ -1,14 +1,14 @@
-// app/page.js (Frontend UI)
-
 "use client";
 import { useState } from "react";
 
 export default function Home() {
+  // Initialize with all filters selected
   const [jsonInput, setJsonInput] = useState('');
   const [response, setResponse] = useState(null);
   const [error, setError] = useState('');
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  
+  const [selectedOptions, setSelectedOptions] = useState(['Alphabets', 'Numbers', 'Highest alphabet']); // All filters active by default
+
+  // Submit the API request and handle the response or errors
   const handleSubmit = async () => {
     setError('');
 
@@ -29,12 +29,12 @@ export default function Home() {
       } else {
         setError(data.message || 'Something went wrong');
       }
-
     } catch (err) {
       setError('Invalid JSON input');
     }
   };
 
+  // Handle changes in selected filter options
   const handleOptionChange = (event) => {
     const { value, checked } = event.target;
     if (checked) {
@@ -44,82 +44,107 @@ export default function Home() {
     }
   };
 
+  // Render the filtered response based on selected options
   const renderFilteredResponse = () => {
     if (!response) return null;
 
-    const filteredResponse = {};
+    let result = "";
 
-    if (selectedOptions.includes('Alphabets')) {
-      filteredResponse.alphabets = response.alphabets;
+    if (selectedOptions.includes('Alphabets') && response.alphabets?.length) {
+      result += `Alphabets: ${response.alphabets.join(', ')}\n`;
     }
 
-    if (selectedOptions.includes('Numbers')) {
-      filteredResponse.numbers = response.numbers;
+    if (selectedOptions.includes('Numbers') && response.numbers?.length) {
+      result += `Numbers: ${response.numbers.join(', ')}\n`;
     }
 
-    if (selectedOptions.includes('Highest alphabet')) {
-      filteredResponse.highest_alphabet = response.highest_alphabet;
+    if (selectedOptions.includes('Highest alphabet') && response.highest_alphabet) {
+      result += `Highest Alphabet: ${response.highest_alphabet}\n`;
     }
 
-    return JSON.stringify(filteredResponse, null, 2);
+    return result || "No filters selected.";
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">ABCD123</h1>
+    <div className="p-6 min-h-screen flex flex-col items-center bg-gray-100">
+      {/* Header */}
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">ABCD123 Filtered Response</h1>
+
+      {/* JSON Input Area */}
       <textarea
         value={jsonInput}
         onChange={(e) => setJsonInput(e.target.value)}
-        placeholder='Enter JSON here'
-        className="border p-2 mb-4 w-full"
+        placeholder='Enter JSON here (e.g. {"data": ["A", "1", "B", "3"]})'
+        className="border border-gray-300 p-4 mb-4 w-full max-w-lg h-32 resize-none rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
+
+      {/* Submit Button */}
       <button
         onClick={handleSubmit}
-        className="bg-blue-500 text-white p-2 rounded"
+        className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300 shadow-lg"
       >
         Submit
       </button>
 
+      {/* Error Message */}
       {error && <p className="text-red-500 mt-4">{error}</p>}
 
+      {/* Filter Section */}
       {response && (
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold">Response</h2>
-          <pre className="bg-gray-100 p-2 rounded">{JSON.stringify(response, null, 2)}</pre>
+        <div className="mt-8 w-full max-w-lg bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Select Filters:</h3>
 
-          <div className="mt-4">
-            <h3>Select Filters:</h3>
-            <label>
-              <input
-                type="checkbox"
-                value="Alphabets"
-                onChange={handleOptionChange}
-              />
-              Alphabets
-            </label>
-            <label className="ml-4">
-              <input
-                type="checkbox"
-                value="Numbers"
-                onChange={handleOptionChange}
-              />
-              Numbers
-            </label>
-            <label className="ml-4">
-              <input
-                type="checkbox"
-                value="Highest alphabet"
-                onChange={handleOptionChange}
-              />
-              Highest alphabet
-            </label>
+          {/* Conditionally render filters based on available data */}
+          <div className="flex flex-col space-y-2">
+            {/* Show "Alphabets" filter only if response has alphabets */}
+            {response.alphabets?.length > 0 && (
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  value="Alphabets"
+                  onChange={handleOptionChange}
+                  className="form-checkbox h-5 w-5 text-blue-500"
+                  checked={selectedOptions.includes('Alphabets')} // Check based on state
+                />
+                <span className="text-gray-700">Alphabets</span>
+              </label>
+            )}
 
-            <div className="mt-4">
-              <h3>Filtered Response:</h3>
-              <pre className="bg-gray-100 p-2 rounded">
-                {renderFilteredResponse()}
-              </pre>
-            </div>
+            {/* Show "Numbers" filter only if response has numbers */}
+            {response.numbers?.length > 0 && (
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  value="Numbers"
+                  onChange={handleOptionChange}
+                  className="form-checkbox h-5 w-5 text-blue-500"
+                  checked={selectedOptions.includes('Numbers')} // Check based on state
+                />
+                <span className="text-gray-700">Numbers</span>
+              </label>
+            )}
+
+            {/* Always show "Highest Alphabet" if available */}
+            {response.highest_alphabet && (
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  value="Highest alphabet"
+                  onChange={handleOptionChange}
+                  className="form-checkbox h-5 w-5 text-blue-500"
+                  checked={selectedOptions.includes('Highest alphabet')} // Check based on state
+                />
+                <span className="text-gray-700">Highest Alphabet</span>
+              </label>
+            )}
+          </div>
+
+          {/* Filtered Response */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Filtered Response:</h3>
+            <pre className="bg-gray-100 p-4 rounded-md whitespace-pre-wrap text-gray-800">
+              {renderFilteredResponse()}
+            </pre>
           </div>
         </div>
       )}
