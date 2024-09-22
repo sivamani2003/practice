@@ -29,7 +29,7 @@ export async function POST(request) {
     }
 
     // Static user details
-    const user_id = "sivamani_123";
+    const user_id = "sivamani_13072003";
     const email = "sivamani_k@srmap.edu.in";
     const roll_number = "AP21110010641";
 
