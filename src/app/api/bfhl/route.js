@@ -47,10 +47,14 @@ export async function POST(request) {
     });
 
     // Find the highest lowercase alphabet
-    let highest_alphabet = [];
+    let highest_alphabet = '';
     const lowercaseAlphabets = alphabets.filter(char => /^[a-z]$/.test(char));
+
     if (lowercaseAlphabets.length > 0) {
-      highest_alphabet = [lowercaseAlphabets.sort((a, b) => b.localeCompare(a))[0]];
+      // Use Math.max and spread operator to find the highest alphabet character
+      highest_alphabet = lowercaseAlphabets.reduce((max, current) => 
+        current > max ? current : max
+      );
     }
 
     // File validation logic
@@ -86,7 +90,7 @@ export async function POST(request) {
       roll_number,
       numbers,
       alphabets,
-      highest_alphabet,
+      highest_alphabet: highest_alphabet || null,
       file_valid,
       file_mime_type: file_mime_type || null,
       file_size_kb: file_valid ? file_size_kb : null,
@@ -99,7 +103,6 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    // Handle any server error
     return new Response(
       JSON.stringify({
         is_success: false,
