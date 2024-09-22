@@ -1,3 +1,6 @@
+import { Buffer } from 'buffer';
+
+// Handle GET request
 export async function GET() {
   return new Response(JSON.stringify({ operation_code: 1 }), {
     status: 200,
@@ -5,10 +8,13 @@ export async function GET() {
   });
 }
 
+// Handle POST request
 export async function POST(request) {
   try {
+    // Extract data from request body
     const { data, file_b64 } = await request.json();
 
+    // Validate input
     if (!data || !Array.isArray(data)) {
       return new Response(
         JSON.stringify({
@@ -22,14 +28,16 @@ export async function POST(request) {
       );
     }
 
-    const user_id = "sivamani_123"; // Static user_id
-    const email = "sivamani_k@srmap.edu.in"; // Static email
-    const roll_number = "AP21110010641"; // Static roll number
+    // Static user details
+    const user_id = "sivamani_123";
+    const email = "sivamani_k@srmap.edu.in";
+    const roll_number = "AP21110010641";
 
+    // Arrays to store numbers and alphabets
     const numbers = [];
     const alphabets = [];
 
-    // Separate numbers and alphabets from the data array
+    // Separate numbers and alphabets
     data.forEach(item => {
       if (!isNaN(item)) {
         numbers.push(item);
@@ -54,15 +62,20 @@ export async function POST(request) {
       // Decode base64 to binary
       const buffer = Buffer.from(file_b64, 'base64');
 
-      // Validate file MIME type (example: image/png)
-      const mime = require('mime-types');
-      file_mime_type = mime.lookup(buffer);
-
-      if (file_mime_type) {
+      // Validate file MIME type using basic MIME detection
+      if (file_b64.startsWith('/9j/')) {
+        file_mime_type = 'image/jpeg';
         file_valid = true;
-        // File size in kilobytes
-        file_size_kb = (buffer.length / 1024).toFixed(2); // Convert bytes to KB
+      } else if (file_b64.startsWith('iVBORw0KGgo')) {
+        file_mime_type = 'image/png';
+        file_valid = true;
+      } else {
+        file_mime_type = 'unknown';
+        file_valid = false;
       }
+
+      // Calculate file size in kilobytes
+      file_size_kb = (buffer.length / 1024).toFixed(2);
     }
 
     // Build the response
@@ -79,12 +92,14 @@ export async function POST(request) {
       file_size_kb: file_valid ? file_size_kb : null,
     };
 
+    // Return successful response
     return new Response(JSON.stringify(response), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
+    // Handle any server error
     return new Response(
       JSON.stringify({
         is_success: false,
