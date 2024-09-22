@@ -66,36 +66,38 @@ export default function Home() {
   };
 
   return (
-    <div className="p-6 min-h-screen flex flex-col items-center bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex flex-col items-center justify-center p-4 text-white">
       {/* Header */}
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">AP21110010641 K Sivamani</h1>
+      <h1 className="text-4xl font-extrabold mb-8 shadow-lg rounded-lg p-4 bg-black bg-opacity-30">
+        AP21110010641 K Sivamani
+      </h1>
 
       {/* JSON Input Area */}
       <textarea
         value={jsonInput}
         onChange={(e) => setJsonInput(e.target.value)}
         placeholder='Enter JSON here (e.g. {"data": ["A", "1", "B", "3"]})'
-        className="border border-gray-300 p-4 mb-4 w-full max-w-lg h-32 resize-none rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="w-full max-w-md p-4 mb-4 h-40 bg-white text-gray-800 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-pink-300"
       />
 
       {/* Submit Button */}
       <button
         onClick={handleSubmit}
-        className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300 shadow-lg"
+        className="px-6 py-3 rounded-lg bg-yellow-400 text-black font-semibold hover:bg-yellow-500 transition duration-300 shadow-md"
       >
         Submit
       </button>
 
       {/* Error Message */}
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+      {error && <p className="text-red-200 mt-4 text-lg font-semibold">{error}</p>}
 
       {/* Filter Section */}
       {response && (
-        <div className="mt-8 w-full max-w-lg bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Select Filters:</h3>
+        <div className="mt-8 w-full max-w-lg bg-white bg-opacity-10 p-6 rounded-lg shadow-md backdrop-blur-md">
+          <h3 className="text-xl font-bold text-white mb-4">Select Filters:</h3>
 
           {/* Conditionally render filters based on available data */}
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-4">
             {/* Show "Alphabets" filter only if response has alphabets */}
             {response.alphabets?.length > 0 && (
               <label className="flex items-center space-x-2">
@@ -103,10 +105,10 @@ export default function Home() {
                   type="checkbox"
                   value="Alphabets"
                   onChange={handleOptionChange}
-                  className="form-checkbox h-5 w-5 text-blue-500"
+                  className="form-checkbox h-5 w-5 text-yellow-300"
                   checked={selectedOptions.includes('Alphabets')} // Check based on state
                 />
-                <span className="text-gray-700">Alphabets</span>
+                <span className="text-white">Alphabets</span>
               </label>
             )}
 
@@ -117,10 +119,10 @@ export default function Home() {
                   type="checkbox"
                   value="Numbers"
                   onChange={handleOptionChange}
-                  className="form-checkbox h-5 w-5 text-blue-500"
+                  className="form-checkbox h-5 w-5 text-yellow-300"
                   checked={selectedOptions.includes('Numbers')} // Check based on state
                 />
-                <span className="text-gray-700">Numbers</span>
+                <span className="text-white">Numbers</span>
               </label>
             )}
 
@@ -131,18 +133,18 @@ export default function Home() {
                   type="checkbox"
                   value="Highest alphabet"
                   onChange={handleOptionChange}
-                  className="form-checkbox h-5 w-5 text-blue-500"
+                  className="form-checkbox h-5 w-5 text-yellow-300"
                   checked={selectedOptions.includes('Highest alphabet')} // Check based on state
                 />
-                <span className="text-gray-700">Highest Alphabet</span>
+                <span className="text-white">Highest Alphabet</span>
               </label>
             )}
           </div>
 
           {/* Filtered Response */}
           <div className="mt-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Filtered Response:</h3>
-            <pre className="bg-gray-100 p-4 rounded-md whitespace-pre-wrap text-gray-800">
+            <h3 className="text-xl font-bold text-white mb-2">Filtered Response:</h3>
+            <pre className="bg-black bg-opacity-30 p-4 rounded-lg text-white whitespace-pre-wrap">
               {renderFilteredResponse()}
             </pre>
           </div>
