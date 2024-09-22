@@ -6,11 +6,13 @@ export default function Home() {
   const [jsonInput, setJsonInput] = useState('');
   const [response, setResponse] = useState(null);
   const [error, setError] = useState('');
-  const [selectedOptions, setSelectedOptions] = useState(['Alphabets', 'Numbers', 'Highest alphabet']);
+  const [selectedOptions, setSelectedOptions] = useState(['Alphabets', 'Numbers', 'Highest lowercase alphabet']);
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State to control dropdown visibility
 
   // Submit handler
   const handleSubmit = async () => {
     setError('');
+    setResponse(null); // Clear previous response
 
     try {
       const parsedInput = JSON.parse(jsonInput);
@@ -35,13 +37,15 @@ export default function Home() {
   };
 
   // Filter options handler
-  const handleOptionChange = (event) => {
-    const { value, checked } = event.target;
-    if (checked) {
-      setSelectedOptions((prev) => [...prev, value]);
-    } else {
-      setSelectedOptions((prev) => prev.filter((option) => option !== value));
-    }
+  const handleOptionChange = (value) => {
+    setSelectedOptions((prev) =>
+      prev.includes(value) ? prev.filter((option) => option !== value) : [...prev, value]
+    );
+  };
+
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setDropdownOpen((prev) => !prev);
   };
 
   // Render filtered response
@@ -58,8 +62,8 @@ export default function Home() {
       result += `Numbers: ${response.numbers.join(', ')}\n`;
     }
 
-    if (selectedOptions.includes('Highest alphabet') && response.highest_alphabet) {
-      result += `Highest Alphabet: ${response.highest_alphabet}\n`;
+    if (selectedOptions.includes('Highest lowercase alphabet') && response.highest_alphabet) {
+      result += `Highest lowercase alphabet: ${response.highest_alphabet}\n`;
     }
 
     return result || 'No filters selected.';
@@ -103,45 +107,49 @@ export default function Home() {
         <div className="mt-10 w-full max-w-lg bg-white p-8 rounded-xl shadow-lg border border-gray-100">
           <h3 className="text-lg font-semibold text-blue-900 mb-4">Select Filters:</h3>
 
-          {/* Filters */}
-          <div className="flex flex-col space-y-3">
-            {response.alphabets?.length > 0 && (
-              <label className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  value="Alphabets"
-                  onChange={handleOptionChange}
-                  className="form-checkbox h-6 w-6 text-blue-600"
-                  checked={selectedOptions.includes('Alphabets')}
-                />
-                <span className="text-gray-700">Alphabets</span>
-              </label>
-            )}
-
-            {response.numbers?.length > 0 && (
-              <label className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  value="Numbers"
-                  onChange={handleOptionChange}
-                  className="form-checkbox h-6 w-6 text-blue-600"
-                  checked={selectedOptions.includes('Numbers')}
-                />
-                <span className="text-gray-700">Numbers</span>
-              </label>
-            )}
-
-            {response.highest_alphabet && (
-              <label className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  value="Highest alphabet"
-                  onChange={handleOptionChange}
-                  className="form-checkbox h-6 w-6 text-blue-600"
-                  checked={selectedOptions.includes('Highest alphabet')}
-                />
-                <span className="text-gray-700">Highest Alphabet</span>
-              </label>
+          {/* Custom Dropdown */}
+          <div className="relative w-full">
+            <button
+              onClick={toggleDropdown}
+              className="bg-blue-600 text-white w-full py-2 px-4 rounded-lg shadow-md focus:outline-none"
+            >
+              Choose Filters
+            </button>
+            {dropdownOpen && (
+              <div className="absolute z-10 w-full mt-2 bg-white shadow-lg rounded-lg border border-gray-200">
+                <ul className="py-2">
+                  {response.alphabets?.length > 0 && (
+                    <li
+                      onClick={() => handleOptionChange('Alphabets')}
+                      className={`px-4 py-2 cursor-pointer ${
+                        selectedOptions.includes('Alphabets') ? 'bg-blue-100' : ''
+                      } hover:bg-blue-50`}
+                    >
+                      {selectedOptions.includes('Alphabets') ? '✔ ' : ''}Alphabets
+                    </li>
+                  )}
+                  {response.numbers?.length > 0 && (
+                    <li
+                      onClick={() => handleOptionChange('Numbers')}
+                      className={`px-4 py-2 cursor-pointer ${
+                        selectedOptions.includes('Numbers') ? 'bg-blue-100' : ''
+                      } hover:bg-blue-50`}
+                    >
+                      {selectedOptions.includes('Numbers') ? '✔ ' : ''}Numbers
+                    </li>
+                  )}
+                  {response.highest_alphabet && (
+                    <li
+                      onClick={() => handleOptionChange('Highest lowercase alphabet')}
+                      className={`px-4 py-2 cursor-pointer ${
+                        selectedOptions.includes('Highest lowercase alphabet') ? 'bg-blue-100' : ''
+                      } hover:bg-blue-50`}
+                    >
+                      {selectedOptions.includes('Highest lowercase alphabet') ? '✔ ' : ''}Highest lowercase alphabet
+                    </li>
+                  )}
+                </ul>
+              </div>
             )}
           </div>
 
