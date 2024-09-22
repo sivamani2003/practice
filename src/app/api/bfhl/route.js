@@ -95,9 +95,13 @@ export async function POST(request) {
       alphabets,
       highest_alphabet: highest_alphabet || null,
       file_valid,
-      file_mime_type: file_mime_type || null,
-      file_size_kb: file_valid ? file_size_kb : null,
     };
+
+    // Conditionally include file details if the file is valid
+    if (file_valid) {
+      response.file_mime_type = file_mime_type;
+      response.file_size_kb = file_size_kb;
+    }
 
     // Return successful response
     return new Response(JSON.stringify(response), {
