@@ -47,14 +47,17 @@ export async function POST(request) {
     });
 
     // Find the highest lowercase alphabet
-    let highest_lowercase_alphabet = '';
+    let highest_lowercase_alphabet = [];
     const lowercaseAlphabets = alphabets.filter(char => /^[a-z]$/.test(char));
 
     if (lowercaseAlphabets.length > 0) {
       // Use reduce to find the highest alphabet character
-      highest_lowercase_alphabet = lowercaseAlphabets.reduce((max, current) => 
+      const highestAlphabet = lowercaseAlphabets.reduce((max, current) => 
         current > max ? current : max
       );
+      
+      // Wrap the highest alphabet in an array
+      highest_lowercase_alphabet = [highestAlphabet];
     }
 
     // File validation logic
@@ -93,7 +96,7 @@ export async function POST(request) {
       roll_number,
       numbers,
       alphabets,
-      highest_lowercase_alphabet: highest_lowercase_alphabet || null, // Updated key
+      highest_lowercase_alphabet, // Now this is always an array
       file_valid,
     };
 
