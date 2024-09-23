@@ -62,8 +62,8 @@ export default function Home() {
       result += `Numbers: ${response.numbers.join(', ')}\n`;
     }
 
-    if (selectedOptions.includes('Highest lowercase alphabet') && response.highest_alphabet) {
-      result += `Highest lowercase alphabet: ${response.highest_alphabet}\n`;
+    if (selectedOptions.includes('Highest lowercase alphabet') && response.highest_lowercase_alphabet) {
+      result += `Highest lowercase alphabet: ${response.highest_lowercase_alphabet}\n`;
     }
 
     return result || 'No filters selected.';
@@ -138,7 +138,7 @@ export default function Home() {
                       {selectedOptions.includes('Numbers') ? '✔ ' : ''}Numbers
                     </li>
                   )}
-                  {response.highest_alphabet && (
+                  {response.highest_lowercase_alphabet && (
                     <li
                       onClick={() => handleOptionChange('Highest lowercase alphabet')}
                       className={`px-4 py-2 cursor-pointer ${
